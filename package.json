@@ -1,0 +1,25 @@
+{
+  "name": "twitchplaysexpeditions",
+  "version": "1.0.0",
+  "description": "A lightweight application designed to allow Twitch users to vote on which cards get drafted next in a Streamer's Expedition run.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/config"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarkTulch/TwitchPlaysExpeditions.git"
+  },
+  "author": "Mark Tulchinsky, Devin Gajewski, Karan Mohan, TJ Parsons",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarkTulch/TwitchPlaysExpeditions/issues"
+  },
+  "homepage": "https://github.com/MarkTulch/TwitchPlaysExpeditions#readme",
+  "dependencies": {
+    "@hapi/hapi": "^18.4.0",
+    "commander": "^4.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "request": "^2.88.0"
+  }
+}
