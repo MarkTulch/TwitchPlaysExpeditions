@@ -2,6 +2,8 @@ const twitch = require('./util/twitch-helper.js');
 const lor = require('./util/runeterra-helper.js');
 
 var timer;
+var cooldown;
+const channelCooldownMs = 1000;     
 var votes = new Map();
 
 //NOTE for Mark and Karan:
@@ -12,7 +14,8 @@ var votes = new Map();
 // "type" field which is the string you pass, and a "object" field which can be
 // anything. Right now, I've got message types "vote-start" and "vote-end," and
 // my listeners in the front-end first check what the "broadcast type" is before
-// appropriately handling the message. Use this functionality to your advantage.
+// appropriately handling the message. Use this functionality
+// to your advantage.
 
 
 
@@ -33,15 +36,32 @@ async function beginVote(payload) {
 	//broadcast 'vote-start' event then begin a countdown until broadcasting
 	//'vote-end' event
 	twitch.broadcastObject('vote-start', {});
-    setTimeout(voteEnd, payload.voteDuration * 1000);
+	
+	
+
+	setTimeout(voteEnd, payload.voteDuration * 1000);
+	for (i=1;i<payload.voteDuration;i++){
+		setTimeout(sendVoteCountUpdate, i*channelCooldownMs);
+	}
+	
 }
 
 //broadcast 'vote-end' event
 function voteEnd() {
+	console.log(countVotes());
     twitch.broadcastObject('vote-end', countVotes());
 }
 
+function sendVoteCountUpdate() {
 
+	tally = getVotes();
+	voteCount = {
+		option1 : tally.get('option1'),
+		option2 : tally.get('option2'),
+		option3 : tally.get('option3')
+	};
+    twitch.broadcastObject('vote-count-update', voteCount);
+}
 
 //These functions are still super rough. Can come back to them if they don't
 //work right
@@ -51,16 +71,9 @@ function castVote(payload) {
 }
 
 function countVotes() {
-    tally = new Map();
-	for (var [user, vote] of votes.entries()) {
-	    if(tally.has(vote)) {
-	        tally.set(vote, tally.get(vote) + 1);
-	    } else {
-	        tally.set(vote, 1);
-	    }
-	}
 	var max = 0;
 	var winner = "";
+	tally = getVotes();
 	for (var key of tally.keys()) {
 	    if(tally.get(key) > max) {
 	        max = tally.get(key);
@@ -70,5 +83,22 @@ function countVotes() {
 	console.log({winner: winner});
 	return { winner: winner };
 }
+
+function getVotes() {
+	tally = new Map();
+	tally.set('option1',0);
+	tally.set('option2',0);
+	tally.set('option3',0);
+
+	for (var [user, vote] of votes.entries()) {
+	    if(tally.has(vote)) {
+	        tally.set(vote, tally.get(vote) + 1);
+	    } else {
+	        tally.set(vote, 1);
+	    }
+	}
+	return tally;
+}
+
 
 module.exports = {beginVote, castVote}

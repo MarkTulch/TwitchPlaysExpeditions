@@ -34,6 +34,8 @@ function createCastVoteRequest(voteOption) {
 function broadcastHandler(target, contentType, message) {
     obj = JSON.parse(message);
     
+
+   // document.getElementById('debug').innerHTML = message;
     //vote-start handler
     if(obj.type == 'vote-start') {
         delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
@@ -43,6 +45,15 @@ function broadcastHandler(target, contentType, message) {
     } else if(obj.type == 'vote-end') {
         //immediately deactivate voting and show results
         $('#vote-div').text(obj.object.winner + ' wins!');
+        
+    //vote-count-update handler
+    } else if(obj.type == 'vote-count-update') {
+        document.getElementById('option1-count').innerHTML = obj.object.option1;
+        document.getElementById('option2-count').innerHTML = obj.object.option2;
+        document.getElementById('option3-count').innerHTML = obj.object.option3;
+
+        //immediately deactivate voting and show results
+       // $('#vote-div').text(obj.object.winner + ' wins!');
     }
 }
 
