@@ -37,7 +37,10 @@ function verifyAndDecodeRequest(request) {
 }
 
 function broadcastObject(type, obj) {
+<<<<<<< Updated upstream
 	//console.log(clientId);
+=======
+>>>>>>> Stashed changes
     const broadcastHeaders = {
         'Client-ID': clientId,
         'Content-Type': 'application/json',

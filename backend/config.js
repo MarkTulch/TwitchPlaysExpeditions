@@ -90,7 +90,7 @@ const server = new Hapi.Server(serverOptions);
 })();
 
 function beginVoteHandler(request) {
-    orchestrator.beginVote(twitch.verifyAndDecodeRequest(request, secret)); //async
+    orchestrator.initVoting(twitch.verifyAndDecodeRequest(request, secret)); //async
     //API requires a response of some kind. TODO: fix this
     return 'yes';
 }
