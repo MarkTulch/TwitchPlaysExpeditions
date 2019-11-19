@@ -45,7 +45,7 @@ async function detectNewCards(apiUrl, voteDuration) {
         	//hack solution to hitting API while the
         	//selection animation is playing
             return;
-        }
+        } 
     } else if(draftType == 'swapping') {
         cardsOnScreen = await lor.getSwappingOptions(apiUrl);
         if(cardsOnScreen.top.left == "" || cardsOnScreen.middle.left == "") {
