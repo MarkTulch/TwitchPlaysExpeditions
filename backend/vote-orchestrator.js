@@ -3,8 +3,15 @@ const lor = require('./util/runeterra-helper.js');
 
 var timer;
 var cooldown;
-const channelCooldownMs = 1000;     
+const apiCooldownMs = 3000;
+const channelCooldownMs = 1000;
+
+var voteEndTimeout;
+var voteCountUpdateTimeout;
+var cardCheckerInterval;
+
 var votes = new Map();
+var currentSelection = {};
 
 //NOTE for Mark and Karan:
 // I have written a twitch-helper file to help with communicating with Twitch.
@@ -23,45 +30,93 @@ var votes = new Map();
 //*****************************************************************************
 //* Main Vote Orchestrator                                                    *
 //*****************************************************************************
-async function beginVote(payload) {
-    draftType = await lor.getDraftType(payload.apiUrl);
-    console.log('Draft type is: ' + draftType);
+function initVoting(payload) {
+    setInterval(detectNewCards, apiCooldownMs, payload.apiUrl, payload.voteDuration);	
+}
+
+async function detectNewCards(apiUrl, voteDuration) {
+    //get draft type and determine current card selection
+    draftType = await lor.getDraftType(apiUrl);
+    var cardsOnScreen = {};
+    
     if(draftType == 'picking') {
-        pickingCards = await lor.getPickingOptions(payload.apiUrl);
-		console.log(pickingCards);
-		
+        cardsOnScreen = await lor.getPickingOptions(apiUrl);
+        if(cardsOnScreen.left.top == "" || cardsOnScreen.middle.top == "") {
+        	//hack solution to hitting API while the
+        	//selection animation is playing
+            return;
+        }
     } else if(draftType == 'swapping') {
-        //TODO
+        cardsOnScreen = await lor.getSwappingOptions(apiUrl);
+        if(cardsOnScreen.top.left == "" || cardsOnScreen.middle.left == "") {
+        	//hack solution to hitting API while the
+        	//selection animation is playing
+            return;
+        }
+    } else {
+        if(Object.getOwnPropertyNames(currentSelection).length != 0) {
+            endVote();
+        }
+        return; //Do nothing! No vote here!
     }
-	
-	//broadcast 'vote-start' event then begin a countdown until broadcasting
-	//'vote-end' event
-	twitch.broadcastObject('vote-start', {draftType : draftType});
-	
-	
-
-	setTimeout(voteEnd, payload.voteDuration * 1000);
-	// for (i=1;i<payload.voteDuration;i++){
-	// 	setTimeout(sendVoteCountUpdate, i*channelCooldownMs);
-	// }
-	
+    
+    if(!lor.hasSameCards(cardsOnScreen, currentSelection)) { //START A NEW VOTE ************
+        currentSelection = cardsOnScreen;
+        beginVote(voteDuration, draftType);
+    }
+    
 }
 
-//broadcast 'vote-end' event
-function voteEnd() {
-	console.log(countVotes());
-    twitch.broadcastObject('vote-end', countVotes());
+function beginVote(voteDuration, draftType) {
+    endVote();
+    
+    console.log("Starting new vote!");
+    console.log(currentSelection);
+    
+    //broadcast 'vote-start' event then begin a countdown until broadcasting
+    //'vote-end' event
+    twitch.broadcastObject('vote-start', {draftType: draftType});
+    
+    if(voteDuration > 0) {
+        voteEndTimeout = setTimeout(endVote, voteDuration * 1000);
+    }
+    voteCountUpdateTimeout = setTimeout(sendVoteCountUpdate, channelCooldownMs, voteDuration);
 }
 
-function sendVoteCountUpdate() {
+function endVote() {
+    //end any vote timers currently running and broadcast 'vote-end' to viewers
+    if(voteEndTimeout) {
+        console.log(countVotes());
+	    voteEndTimeout = null;
+        clearTimeout(voteEndTimeout);
+        voteEndTimeout = null;
+        twitch.broadcastObject('vote-end', countVotes());
+    }
+    if(voteCountUpdateTimeout) { clearTimeout(voteCountUpdateTimeout); voteCountUpdateTimeout = null; }
+}
 
+
+
+//*****************************************************************************
+//* Process cast ballots                                                      *
+//*****************************************************************************
+
+
+function sendVoteCountUpdate(remainingDuration) {
+	remainingDuration--;
 	tally = getVotes();
 	voteCount = {
 		option1 : tally.get('option1'),
 		option2 : tally.get('option2'),
-		option3 : tally.get('option3')
+		option3 : tally.get('option3'),
+		option4 : tally.get('option4')
 	};
     twitch.broadcastObject('vote-count-update', voteCount);
+    if(remainingDuration != 0) {
+        voteCountUpdateTimeout = setTimeout(sendVoteCountUpdate, channelCooldownMs, remainingDuration);
+    } else {
+        voteCountUpdateTimeout = null;
+    }
 }
 
 //These functions are still super rough. Can come back to them if they don't
@@ -81,7 +136,6 @@ function countVotes() {
 	        winner = key;
 	    }
 	}
-	console.log({winner: winner});
 	return { winner: winner };
 }
 
@@ -103,4 +157,4 @@ function getVotes() {
 }
 
 
-module.exports = {beginVote, castVote}
+module.exports = {initVoting, castVote}
