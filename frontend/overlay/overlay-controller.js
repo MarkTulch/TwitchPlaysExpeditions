@@ -57,7 +57,7 @@ function ctrl($scope) {
     broadcastHandler = function(target, contentType, message) {
         obj = JSON.parse(message);
 
-        $('#debug').text(obj.object.draftType);
+        //$('#debug').text(obj.object.draftType);
         //vote-start handler
         if (obj.type == 'vote-start') {
             delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
@@ -97,14 +97,15 @@ function ctrl($scope) {
     swapScreen = function () {
         setVisible(0, swapStageMarker);
         setTextVisible(['posOneText', 'posTwoText', 'posThreeText', 'posSevenText']);
-        document.getElementById("castVoteSwap").style.visibility = "visible"; document.body.style.backgroundImage = "url('https://i.imgur.com/rYhnUQO.png')";
+        document.getElementById("castVoteSwap").style.visibility = "visible"; 
+        // document.body.style.backgroundImage = "url('https://i.imgur.com/rYhnUQO.png')";
     };
 
     // Actives the "Draft" screen
     draftScreen = function () {
         setVisible(swapStageMarker, vote.ids.length);
         setTextVisible(['posFourText', 'posFiveText', 'posSixText']);
-        document.body.style.backgroundImage = "url('https://i.imgur.com/QMdaXFG.jpg')";
+        // document.body.style.backgroundImage = "url('https://i.imgur.com/QMdaXFG.jpg')";
         document.getElementById("castVoteDraft").style.visibility = "visible";
     };
 
@@ -139,9 +140,9 @@ function ctrl($scope) {
     $scope.hoverImage = function (ID) {
         if (vote.selectedVote != ID) {
             if (vote.ids.indexOf(ID) < swapStageMarker) {
-                document.getElementById(ID).style.backgroundImage = "url('https://i.imgur.com/tVBD12D.png')";
+                document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteSwapActive.png)";
             } else {
-                document.getElementById(ID).style.backgroundImage = "url('https://i.imgur.com/FGdmRNV.png')";
+                document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteDraftActive.png)";
             }
         }
     };
@@ -150,9 +151,9 @@ function ctrl($scope) {
     $scope.leftImage = function (ID) {
         if (vote.selectedVote != ID) {
             if (vote.ids.indexOf(ID) < swapStageMarker) {
-                document.getElementById(ID).style.backgroundImage = "url('https://i.imgur.com/uDhHFY6.png')";
+                document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteSwapInactive.png)";
             } else {
-                document.getElementById(ID).style.backgroundImage = "url('https://i.imgur.com/0QzcWSZ.png')";
+                document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteDraftInactive.png)";
             }
         }
     };
@@ -161,9 +162,9 @@ function ctrl($scope) {
     resetAllImages = function () {
         for (var i = 0; i < vote.ids.length; i++) {
             if (vote.ids.indexOf(vote.ids[i]) < swapStageMarker) {
-                document.getElementById(vote.ids[i]).style.backgroundImage = "url('https://i.imgur.com/uDhHFY6.png')";
+                document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteSwapInactive.png)";
             } else {
-                document.getElementById(vote.ids[i]).style.backgroundImage = "url('https://i.imgur.com/0QzcWSZ.png')";
+                document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteDraftInactive.png)";
             }
         }
     };
@@ -174,9 +175,9 @@ function ctrl($scope) {
             if (clickedID == vote.ids[i]) {
                 vote.selectedVote = clickedID;
                 if (vote.ids.indexOf(clickedID) < swapStageMarker) {
-                    document.getElementById(vote.ids[i]).style.backgroundImage = "url('https://i.imgur.com/PcTvxL4.png')";
+                    document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteSwapSelected.png)";
                 } else {
-                    document.getElementById(vote.ids[i]).style.backgroundImage = "url('https://i.imgur.com/JMWmxcZ.png')";
+                    document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteDraftSelected.png)";
                 }
             }
         }

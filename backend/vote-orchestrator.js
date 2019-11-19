@@ -28,7 +28,7 @@ async function beginVote(payload) {
     console.log('Draft type is: ' + draftType);
     if(draftType == 'picking') {
         pickingCards = await lor.getPickingOptions(payload.apiUrl);
-		console.log(pickingCards);
+		//console.log(pickingCards);
 		
     } else if(draftType == 'swapping') {
         //TODO
