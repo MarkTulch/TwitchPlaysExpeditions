@@ -143,6 +143,7 @@ function getVotes() {
 	tally.set('option1',0);
 	tally.set('option2',0);
 	tally.set('option3',0);
+	tally.set('option4',0);
 
 	for (var [user, vote] of votes.entries()) {
 	    if(tally.has(vote)) {
