@@ -28,21 +28,22 @@ async function beginVote(payload) {
     console.log('Draft type is: ' + draftType);
     if(draftType == 'picking') {
         pickingCards = await lor.getPickingOptions(payload.apiUrl);
-    	console.log(pickingCards);
+		console.log(pickingCards);
+		
     } else if(draftType == 'swapping') {
         //TODO
     }
 	
 	//broadcast 'vote-start' event then begin a countdown until broadcasting
 	//'vote-end' event
-	twitch.broadcastObject('vote-start', {});
+	twitch.broadcastObject('vote-start', {draftType : draftType});
 	
 	
 
 	setTimeout(voteEnd, payload.voteDuration * 1000);
-	for (i=1;i<payload.voteDuration;i++){
-		setTimeout(sendVoteCountUpdate, i*channelCooldownMs);
-	}
+	// for (i=1;i<payload.voteDuration;i++){
+	// 	setTimeout(sendVoteCountUpdate, i*channelCooldownMs);
+	// }
 	
 }
 
@@ -89,6 +90,7 @@ function getVotes() {
 	tally.set('option1',0);
 	tally.set('option2',0);
 	tally.set('option3',0);
+	tally.set('option4',0);
 
 	for (var [user, vote] of votes.entries()) {
 	    if(tally.has(vote)) {
