@@ -12,8 +12,12 @@ function getDraftType(apiUrl) {
     return new Promise(resolve => {
         request(apiUrl + '/expeditions-state', function (error, response, body) {
             if(!error) {
-                state = JSON.parse(body).State.toLowerCase().trim();
-                resolve(state); //basically a return value
+            	try {
+                    state = JSON.parse(body).State.toLowerCase().trim();
+                    resolve(state); //basically a return value
+                } catch(e) {
+                	resolve(null); //basically return null
+                }
             } else {
                 console.error(error); //TODO: give broadcaster error
                 resolve(null); //basically return null
@@ -27,85 +31,90 @@ function getPickingOptions(apiUrl) {
 	return new Promise(resolve => {
 	    request(apiUrl + '/positional-rectangles', function (error, response, body) {
             if(!error) {
-                returnObj = {
-                    left: {
-                        top: "",
-                        middle: "",
-                        bottom: ""
-                    },
-                    middle: {
-                        top: "",
-                        middle: "",
-                        bottom: ""
-                    },
-                    right: {
-                        top: "",
-                        middle: "",
-                        bottom: ""
-                    }
-                };
-                rectangles = JSON.parse(body).Rectangles;
-                xPosArray = [];
-                yPosArray = [];
-                
-                //super sub-optimal sorting, but it's only 9 cards who cares
-                for (var card of rectangles) {
-                    xPosArray.push(card.TopLeftX);
-                    yPosArray.push(card.TopLeftY);
-                }
-                xPosArray.sort((a,b) => a-b);
-                yPosArray.sort((a,b) => a-b);
-        
-                if(rectangles === undefined || rectangles.length == 0) {
-                	console.log('rectangles is undefined');
-                    resolve(returnObj);
-                } else {
+            	try {
+                    returnObj = {
+                        left: {
+                            top: "",
+                            middle: "",
+                            bottom: ""
+                        },
+                        middle: {
+                            top: "",
+                            middle: "",
+                            bottom: ""
+                        },
+                        right: {
+                            top: "",
+                            middle: "",
+                            bottom: ""
+                        }
+                    };
+                    rectangles = JSON.parse(body).Rectangles;
                     xPosArray = [];
                     yPosArray = [];
-                    minXPos = rectangles.reduce((minX, rectangle) =>
-                        rectangle.TopLeftX < minX ? rectangle.TopLeftX : minX,
-                        rectangles[0].TopLeftX);
                     
-                    //super sub-optimal sorting, but it's only a few cards who cares
+                    //super sub-optimal sorting, but it's only 9 cards who cares
                     for (var card of rectangles) {
-                    	if((rectangles.length > 9 && card.TopLeftX != minXPos) ||
-                    	        rectangles.length == 9) {
-                            xPosArray.push(card.TopLeftX);
-                            yPosArray.push(card.TopLeftY);
-                        }
+                        xPosArray.push(card.TopLeftX);
+                        yPosArray.push(card.TopLeftY);
                     }
-                    
                     xPosArray.sort((a,b) => a-b);
-                    yPosArray.sort((a,b) => b-a);
+                    yPosArray.sort((a,b) => a-b);
                     
-                    for (var card of rectangles) {
-                        if(card.TopLeftX == xPosArray[0]) {
-                            if(card.TopLeftY == yPosArray[0]) {
-                            	returnObj.left.top = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[3]) {
-                            	returnObj.left.middle = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[6]) {
-                            	returnObj.left.bottom = card.CardCode;
-                            } 
-                        } else if(card.TopLeftX == xPosArray[( xPosArray.length / 3 )]) {
-                            if(card.TopLeftY == yPosArray[0]) {
-                            	returnObj.middle.top = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[3]) {
-                            	returnObj.middle.middle = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[6]) {
-                            	returnObj.middle.bottom = card.CardCode;
-                            } 
-                        } else if(card.TopLeftX == xPosArray[(2 * xPosArray.length / 3)]) {
-                            if(card.TopLeftY == yPosArray[0]) {
-                            	returnObj.right.top = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[3]) {
-                            	returnObj.right.middle = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[6]) {
-                            	returnObj.right.bottom = card.CardCode;
-                            } 
+                    if(rectangles === undefined || rectangles.length == 0) {
+                    	console.log('rectangles is undefined');
+                        resolve(returnObj);
+                    } else {
+                        xPosArray = [];
+                        yPosArray = [];
+                        minXPos = rectangles.reduce((minX, rectangle) =>
+                            rectangle.TopLeftX < minX ? rectangle.TopLeftX : minX,
+                            rectangles[0].TopLeftX);
+                        
+                        //super sub-optimal sorting, but it's only a few cards who cares
+                        for (var card of rectangles) {
+                        	if((rectangles.length > 9 && card.TopLeftX != minXPos) ||
+                        	        rectangles.length == 9) {
+                                xPosArray.push(card.TopLeftX);
+                                yPosArray.push(card.TopLeftY);
+                            }
                         }
+                        
+                        xPosArray.sort((a,b) => a-b);
+                        yPosArray.sort((a,b) => b-a);
+                        
+                        for (var card of rectangles) {
+                            if(card.TopLeftX == xPosArray[0]) {
+                                if(card.TopLeftY == yPosArray[0]) {
+                                	returnObj.left.top = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[3]) {
+                                	returnObj.left.middle = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[6]) {
+                                	returnObj.left.bottom = card.CardCode;
+                                } 
+                            } else if(card.TopLeftX == xPosArray[( xPosArray.length / 3 )]) {
+                                if(card.TopLeftY == yPosArray[0]) {
+                                	returnObj.middle.top = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[3]) {
+                                	returnObj.middle.middle = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[6]) {
+                                	returnObj.middle.bottom = card.CardCode;
+                                } 
+                            } else if(card.TopLeftX == xPosArray[(2 * xPosArray.length / 3)]) {
+                                if(card.TopLeftY == yPosArray[0]) {
+                                	returnObj.right.top = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[3]) {
+                                	returnObj.right.middle = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[6]) {
+                                	returnObj.right.bottom = card.CardCode;
+                                } 
+                            }
+                        }
+                        
+                        resolve(returnObj);
                     }
-                    
+                } catch(e) {
+                    console.log('error getting rectangles');
                     resolve(returnObj);
                 }
             } else {
@@ -121,62 +130,67 @@ function getSwappingOptions(apiUrl) {
 	return new Promise(resolve => {
 	    request(apiUrl + '/positional-rectangles', function (error, response, body) {
             if(!error) {
-                returnObj = {
-                    top: {
-                        left: "",
-                        right: ""
-                    },
-                    middle: {
-                        left: "",
-                        right: ""
-                    },
-                    bottom: {
-                        left: "",
-                        right: ""
-                    }
-                };
-                rectangles = JSON.parse(body).Rectangles;
-                if(rectangles === undefined || rectangles.length == 0) {
-                    console.log('rectangles is undefined');
-                    resolve(returnObj);
-                } else {
-                    xPosArray = [];
-                    yPosArray = [];
-                    minXPos = rectangles.reduce((minX, rectangle) =>
-                        rectangle.TopLeftX < minX ? rectangle.TopLeftX : minX,
-                        rectangles[0].TopLeftX);
-                    
-                    //super sub-optimal sorting, but it's only a few cards who cares
-                    for (var card of rectangles) {
-                    	if(card.TopLeftX != minXPos) {
-                            xPosArray.push(card.TopLeftX);
-                            yPosArray.push(card.TopLeftY);
+            	try {
+                    returnObj = {
+                        top: {
+                            left: "",
+                            right: ""
+                        },
+                        middle: {
+                            left: "",
+                            right: ""
+                        },
+                        bottom: {
+                            left: "",
+                            right: ""
                         }
-                    }
-                    
-                    xPosArray.sort((a,b) => a-b);
-                    yPosArray.sort((a,b) => b-a);
-                    
-                    for (var card of rectangles) {
-                        if(card.TopLeftX == xPosArray[0]) {
-                            if(card.TopLeftY == yPosArray[0]) {
-                            	returnObj.bottom.left = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[2]) {
-                            	returnObj.middle.left = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[4]) {
-                            	returnObj.top.left = card.CardCode;
-                            } 
-                        } else if(card.TopLeftX == xPosArray[3]) {
-                            if(card.TopLeftY == yPosArray[0]) {
-                            	returnObj.bottom.right = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[2]) {
-                            	returnObj.middle.right = card.CardCode;
-                            } else if(card.TopLeftY == yPosArray[4]) {
-                            	returnObj.top.right = card.CardCode;
-                            } 
+                    };
+                    rectangles = JSON.parse(body).Rectangles;
+                    if(rectangles === undefined || rectangles.length == 0) {
+                        console.log('rectangles is undefined');
+                        resolve(returnObj);
+                    } else {
+                        xPosArray = [];
+                        yPosArray = [];
+                        minXPos = rectangles.reduce((minX, rectangle) =>
+                            rectangle.TopLeftX < minX ? rectangle.TopLeftX : minX,
+                            rectangles[0].TopLeftX);
+                        
+                        //super sub-optimal sorting, but it's only a few cards who cares
+                        for (var card of rectangles) {
+                        	if(card.TopLeftX != minXPos) {
+                                xPosArray.push(card.TopLeftX);
+                                yPosArray.push(card.TopLeftY);
+                            }
                         }
+                        
+                        xPosArray.sort((a,b) => a-b);
+                        yPosArray.sort((a,b) => b-a);
+                        
+                        for (var card of rectangles) {
+                            if(card.TopLeftX == xPosArray[0]) {
+                                if(card.TopLeftY == yPosArray[0]) {
+                                	returnObj.bottom.left = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[2]) {
+                                	returnObj.middle.left = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[4]) {
+                                	returnObj.top.left = card.CardCode;
+                                } 
+                            } else if(card.TopLeftX == xPosArray[3]) {
+                                if(card.TopLeftY == yPosArray[0]) {
+                                	returnObj.bottom.right = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[2]) {
+                                	returnObj.middle.right = card.CardCode;
+                                } else if(card.TopLeftY == yPosArray[4]) {
+                                	returnObj.top.right = card.CardCode;
+                                } 
+                            }
+                        }
+                        
+                        resolve(returnObj);
                     }
-                    
+                } catch(e) {
+                    console.log('error getting rectangles');
                     resolve(returnObj);
                 }
             } else {

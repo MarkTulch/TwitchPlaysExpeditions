@@ -13,24 +13,12 @@ var cardCheckerInterval;
 var votes = new Map();
 var currentSelection = {};
 
-//NOTE for Mark and Karan:
-// I have written a twitch-helper file to help with communicating with Twitch.
-// The important thing you need to know is there is a method that you can call
-// called "broadcastObject(string, object)". I wrote it with the intent of us
-// using it to broadcast messages back to the front-end. Messages will have a
-// "type" field which is the string you pass, and a "object" field which can be
-// anything. Right now, I've got message types "vote-start" and "vote-end," and
-// my listeners in the front-end first check what the "broadcast type" is before
-// appropriately handling the message. Use this functionality
-// to your advantage.
-
-
-
 
 //*****************************************************************************
 //* Main Vote Orchestrator                                                    *
 //*****************************************************************************
 function initVoting(payload) {
+	//beginVote(15, 'picking');
     setInterval(detectNewCards, apiCooldownMs, payload.apiUrl, payload.voteDuration);	
 }
 
@@ -75,6 +63,7 @@ function beginVote(voteDuration, draftType) {
     
     //broadcast 'vote-start' event then begin a countdown until broadcasting
     //'vote-end' event
+    votes.clear();
     twitch.broadcastObject('vote-start', {draftType: draftType});
     
     if(voteDuration > 0) {

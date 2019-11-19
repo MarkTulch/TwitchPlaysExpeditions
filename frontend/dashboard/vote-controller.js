@@ -15,8 +15,6 @@ twitch.onAuthorized(function(auth) {
     tuid = auth.userId;       //not doing anything with broadcaster ID rn
     
     $('#api-host').removeAttr('disabled');
-    $('#democracy').removeAttr('disabled');
-    $('#anarchy').removeAttr('disabled');
     $('#vote-seconds').removeAttr('disabled');
     $('#begin-vote').removeAttr('disabled');
 });
@@ -30,9 +28,19 @@ function createBeginVoteRequest(token, apiUrl, voteType, voteDuration) {
         },
         data: {
             apiUrl: apiUrl,
-            voteType: voteType,
             voteDuration: voteDuration
         }
+    }
+}
+
+function broadcastHandler(target, contentType, message) {
+    payload = JSON.parse(message);
+    
+    if(payload.type === 'vote-count-update') {
+        $('#results1').text("Option 1: " + payload.object.option1);
+        $('#results2').text("Option 2: " + payload.object.option2);
+        $('#results3').text("Option 3: " + payload.object.option3);
+        $('#results4').text("Option 4: " + payload.object.option4);
     }
 }
 
@@ -44,15 +52,10 @@ $(function() {
         $.ajax(createBeginVoteRequest(
             token,                                    //required auth token
             $('#api-host').val(),                     //API Host URL for LoR
-            $('input[name=vote-type]:checked').val(), //Deomcracy or Anarchy
             $('#vote-seconds').val()                  //Vote duration
         ))
     });
     
-    twitch.listen('broadcast', function (target, contentType, message) {
-        //twitch.rig.log('broadcast received');
-        //TODO: add handlers for broadcaster to deal with different types
-        //      broadcast messages
-    });
+    twitch.listen('broadcast', broadcastHandler);
 
 });

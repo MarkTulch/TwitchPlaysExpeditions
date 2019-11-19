@@ -20,7 +20,6 @@ function ctrl($scope) {
     
     var vote = {
         selectedVote: '',
-        // This is so hard coded that this ordering matters (check the Set Visible function)
         pickButtonIds: ['option1pick', 'option2pick', 'option3pick'],
         swapButtonIds: ['option1swap', 'option2swap', 'option3swap', 'option4swap']
     };
@@ -75,6 +74,7 @@ function ctrl($scope) {
             $scope.count2 = 0;
             $scope.count3 = 0;
             $scope.count4 = 0;
+            resetAllImages();
             
             delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
             if (obj.object.draftType == 'picking') {
