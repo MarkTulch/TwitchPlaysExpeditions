@@ -50,7 +50,7 @@ $(function() {
     });
     
     twitch.listen('broadcast', function (target, contentType, message) {
-        twitch.rig.log('broadcast received');
+        //twitch.rig.log('broadcast received');
         //TODO: add handlers for broadcaster to deal with different types
         //      broadcast messages
     });
