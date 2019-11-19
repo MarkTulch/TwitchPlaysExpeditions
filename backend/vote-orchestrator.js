@@ -62,12 +62,12 @@ async function detectNewCards(apiUrl, voteDuration) {
     
     if(!lor.hasSameCards(cardsOnScreen, currentSelection)) { //START A NEW VOTE ************
         currentSelection = cardsOnScreen;
-        beginVote(voteDuration);
+        beginVote(voteDuration, draftType);
     }
     
 }
 
-function beginVote(voteDuration) {
+function beginVote(voteDuration, draftType) {
     endVote();
     
     console.log("Starting new vote!");
@@ -75,7 +75,7 @@ function beginVote(voteDuration) {
     
     //broadcast 'vote-start' event then begin a countdown until broadcasting
     //'vote-end' event
-    twitch.broadcastObject('vote-start', {draftType: });
+    twitch.broadcastObject('vote-start', {draftType: draftType});
     
     if(voteDuration > 0) {
         voteEndTimeout = setTimeout(endVote, voteDuration * 1000);
@@ -108,7 +108,8 @@ function sendVoteCountUpdate(remainingDuration) {
 	voteCount = {
 		option1 : tally.get('option1'),
 		option2 : tally.get('option2'),
-		option3 : tally.get('option3')
+		option3 : tally.get('option3'),
+		option4 : tally.get('option4')
 	};
     twitch.broadcastObject('vote-count-update', voteCount);
     if(remainingDuration != 0) {
