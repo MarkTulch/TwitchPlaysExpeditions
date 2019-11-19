@@ -45,11 +45,8 @@ function getPickingOptions(apiUrl) {
                     }
                 };
                 rectangles = JSON.parse(body).Rectangles;
-<<<<<<< Updated upstream
                 xPosArray = [];
                 yPosArray = [];
-
-                console.log(JSON.parse(body).Rectangles);
                 
                 //super sub-optimal sorting, but it's only 9 cards who cares
                 for (var card of rectangles) {
@@ -59,23 +56,6 @@ function getPickingOptions(apiUrl) {
                 xPosArray.sort((a,b) => a-b);
                 yPosArray.sort((a,b) => a-b);
         
-                for (var card of rectangles) {
-                    if(card.TopLeftX == xPosArray[0]) {
-                        if(card.TopLeftY == yPosArray[0]) {
-                        	returnObj.left.bottom = card.CardCode;
-                        } else if(card.TopLeftY == yPosArray[3]) {
-                        	returnObj.left.middle = card.CardCode;
-                        } else if(card.TopLeftY == yPosArray[6]) {
-                        	returnObj.left.top = card.CardCode;
-                        }
-                    } else if(card.TopLeftX == xPosArray[3]) {
-                        if(card.TopLeftY == yPosArray[0]) {
-                        	returnObj.middle.bottom = card.CardCode;
-                        } else if(card.TopLeftY == yPosArray[3]) {
-                        	returnObj.middle.middle = card.CardCode;
-                        } else if(card.TopLeftY == yPosArray[6]) {
-                        	returnObj.middle.top = card.CardCode;
-=======
                 if(rectangles === undefined || rectangles.length == 0) {
                 	console.log('rectangles is undefined');
                     resolve(returnObj);
@@ -92,7 +72,6 @@ function getPickingOptions(apiUrl) {
                     	        rectangles.length == 9) {
                             xPosArray.push(card.TopLeftX);
                             yPosArray.push(card.TopLeftY);
->>>>>>> Stashed changes
                         }
                     }
                     
@@ -157,7 +136,6 @@ function getSwappingOptions(apiUrl) {
                     }
                 };
                 rectangles = JSON.parse(body).Rectangles;
-                //console.log(rectangles);
                 if(rectangles === undefined || rectangles.length == 0) {
                     console.log('rectangles is undefined');
                     resolve(returnObj);
