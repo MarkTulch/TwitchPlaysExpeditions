@@ -14,90 +14,42 @@
     <script src="../angular.min.js" type="text/javascript"></script>
     <script src="overlay-controller.js" type="text/javascript"></script>
     
-    <div ng-app="app" ng-controller="ctrl">
+    <div ng-app="app" ng-controller="ctrl" />
     <!--   Positions four through six are used for the drafting screen. Postiions one through three are used for the Swap screen. If I remembered how to do web coding, this would work more optimally. -->
-      
+    
     <!--   Each vote button is made up of two divs. The first is "positionXText" which holds the current vote count. "positionX" is a div for the vote button. -->
-      <!-- <div>A Whole Bunch Of Shit  PPPOOOOOOOPPPPPPPP   PPPPPPPOOOOOOOOOOOOPPPPPPP PPPPPPPPOOO@!()$#*)(!*@$&@!*_()$&@!(*_$&            
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>PPP   PPPPPPPOOOOOOOOOOOOPPPPPPP PPPPPPPPOOO@!()$#*)(!*@$&@!*_()$&@!(*_$&            
-        <br/>PPP   PPPPPPPOOOOOOOOOOOOPPPPPPP PPPPPPPPOOO@!()$#*)(!*@$&@!*_()$&@!(*_$&            
-        <br/>
-        <br/>v
-        <br/>
-        <br/>PPP   PPPPPPPOOOOOOOOOOOOPPPPPPP PPPPPPPPOOO@!()$#*)(!*@$&@!*_()$&@!(*_$&            
-        <br/>
-        <br/>
-<var>PPP   PPPPPPPOOOOOOOOOOOOPPPPPPP PPPPPPPPOOO@!()$#*)(!*@$&@!*_()$&@!(*_$&            
-    <br/>
-    <br/>
-      </div> -->
+
     <!--   Drafting-screen divs -->
-    <div class="positionOneText" id="posOneText">{{count1}}</div>
-    <div class="positionTwoText"id="posTwoText">{{count2}}</div>
-    <div class="positionThreeText"id="posThreeText">{{count3}}</div>
-    <div class="positionFourText" id="posFourText">{{count1}}</div>
-    <div class="positionFiveText"id="posFiveText">{{count2}}</div>
-    <div class="positionSixText"id="posSixText">{{count3}}</div>
-    <div class="positionSevenText"id="posSevenText">{{count4}}</div>
-    <div class="positionFour" id="posFour" style="background-image:url(assets/TPEVoteDraftInactive.png);" ng-mouseover="hoverImage('posFour')" ng-mouseleave="leftImage('posFour')" ng-click="clickImage('posFour')"></div>
-    <div class="positionFive" id="posFive" style="background-image:url(assets/TPEVoteDraftInactive.png);" ng-mouseover="hoverImage('posFive')" ng-mouseleave="leftImage('posFive')" ng-click="clickImage('posFive')"></div>
-    <div class="positionSix" id="posSix" style="background-image:url(assets/TPEVoteDraftInactive.png);" ng-mouseover="hoverImage('posSix')" ng-mouseleave="leftImage('posSix')" ng-click="clickImage('posSix')"></div>
-      <div class="castYourVoteNowDraftStage" id="castVoteDraft"></div>
+    <div id="background" class="gameScreen">
+            <!-- Swap Votes -->
+      <div class="castYourSwapVote" id="swapText"></div>
       
+      <div class="option1Swap" id="option1swap" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('option1swap')" ng-mouseleave="leftImage('option1swap')" ng-click="clickImage('option1swap')">
+        <div class="optionSwapText" id="option1swapText">{{count1}}</div>
+      </div>
+      <div class="option2Swap" id="option2swap" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('option2swap')" ng-mouseleave="leftImage('option2swap')"ng-click="clickImage('option2swap')">
+        <div class="optionSwapText" id="option2swapText">{{count2}}</div>
+      </div>
+      <div class="option3Swap" id="option3swap" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('option3swap')" ng-mouseleave="leftImage('option3swap')"ng-click="clickImage('option3swap')">
+        <div class="optionSwapText" id="option3swapText">{{count3}}</div>
+      </div>
+      <div class="option4Swap" id="option4swap" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('option4swap')" ng-mouseleave="leftImage('option4swap')"ng-click="clickImage('option4swap')">
+        <div class="optionSwapText"id="option4swapText">{{count4}}</div>
+      </div>
       
-    <!--   Swap Screen Divs -->
-      <div class="castYourVoteNow" id="castVoteSwap"></div>
-      <div class="positionOne" id="posOne" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('posOne')" ng-mouseleave="leftImage('posOne')" ng-click="clickImage('posOne')"></div>
-      <div class="positionTwo" id="posTwo" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('posTwo')" ng-mouseleave="leftImage('posTwo')"ng-click="clickImage('posTwo')"></div>
-      <div class="positionThree" id="posThree" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('posThree')" ng-mouseleave="leftImage('posThree')"ng-click="clickImage('posThree')"></div>
-      <div class="positionSeven" id="posSeven" style="background-image:url(assets/TPEVoteSwapInactive.png);" ng-mouseover="hoverImage('posSeven')" ng-mouseleave="leftImage('posSeven')"ng-click="clickImage('posSeven')"></div>
-    </div>
-
-
-
-    <!--
-    <div id="vote-div-pick" style="background-color: #ffffff; display: none;">
-        PICKING
-        <div>
-            <input type="button" id="option1" value="Option 1" />
-            <label id = "option1-count">0</label>
-        </div>
-        <div>
-            <input type="button" id="option2" value="Option 2" />
-            <label id = "option2-count">0</label>
-        </div>
-        <div>
-            <input type="button" id="option3" value="Option 3" />
-            <label id = "option3-count">0</label>
-        </div>
+      <!-- Pick Votes -->
+      <div class="castYourPickVote" id="pickText"></div>
+      <div class="option1Pick" id="option1pick" style="background-image:url(assets/TPEVoteDraftInactive.png);" ng-mouseover="hoverImage('option1pick')" ng-mouseleave="leftImage('option1pick')" ng-click="clickImage('option1pick')">
+        <div class="optionPickText" id="option1pickText">{{count1}}</div>
+      </div>
+      <div class="option2Pick" id="option2pick" style="background-image:url(assets/TPEVoteDraftInactive.png);" ng-mouseover="hoverImage('option2pick')" ng-mouseleave="leftImage('option2pick')" ng-click="clickImage('option2pick')">
+        <div class="optionPickText" id="option2pickText">{{count2}}</div>
+      </div>
+      <div class="option3Pick" id="option3pick" style="background-image:url(assets/TPEVoteDraftInactive.png);" ng-mouseover="hoverImage('option3pick')" ng-mouseleave="leftImage('option3pick')" ng-click="clickImage('option3pick')">
+        <div class="optionPickText" id="option3pickText">{{count3}}</div>
+      </div>
+    
     </div>
     
-    <div id="vote-div-swap" style="background-color: #ffffff; display: none;">
-        SWAPPING
-
-        <div>
-            <input type="button" id="option1" value="Option 1" />
-            <label id = "option1-count">0</label>
-        </div>
-        <div>
-            <input type="button" id="option2" value="Option 2" />
-            <label id = "option2-count">0</label>
-        </div>
-        <div>
-            <input type="button" id="option3" value="Option 3" />
-            <label id = "option3-count">0</label>
-        </div>
-        <div>
-            <input type="button" id="option4" value="Option 4" />
-            <label id = "option4-count">0</label>
-        </div>
-    </div>
-    <div style="background-color: #ffffff; display: block;">
-        <label id = "debug">test</label>
-    </div>-->
 </body>
 </html>

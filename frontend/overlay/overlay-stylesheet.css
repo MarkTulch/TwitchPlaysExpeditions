@@ -1,167 +1,140 @@
 html, body, [ng-app] {
-  height: 100%;
+    position:relative;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
- /* background-image:url('https://i.imgur.com/rYhnUQO.png'); */
- width:100%;
- height:100%;
 }
-div.castYourVoteNow{
-  height:120px;
-  width:299px;
-  margin-left:460px; 
-  margin-top:70px;
+
+/* This should always scale to 1920 x 1080 view screen */
+div.gameScreen {
+  /*background-image: url('https://i.imgur.com/rYhnUQO.png');
+  background-image: url('https://i.imgur.com/QMdaXFG.jpg');*/
+  background-size: contain;
+  width: 100vw; 
+  height: 56.25vw; /* 100/56.25 = 1.778 */
+  max-height: 100vh;
+  max-width: 177.78vh; /* 16/9 = 1.778 */
+  margin: auto;
+  position: relative;
+  top:0;bottom:0; /* vertical center */
+  left:0;right:0; /* horizontal center */
+}
+
+/**************/
+/* Swap votes */
+/**************/
+div.castYourSwapVote{
   background-image:url(assets/TPEVoteSwapCastYourVote.png);
-  background-size:contain;
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 6.5%;
+  left: 26%;
+  width: 15.6%;
+  height: 11%;
 }
-div.castYourVoteNowDraftStage{
-  height:121px;
-  width:300px;
-  margin-left:773px; 
-  margin-top:-30px;
+div.optionSwapText { /* We only need one class for text */
+  position: absolute;
+  font-size: 6vh;
+  color: #da9e55;
+  text-align: center;
+  width: 100%;
+  top: 5%;
+}
+div.option1Swap {
+  /*background-image: url(assets/TPEVoteSwapInactive.png);*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 22%;
+  left: 24%;
+  width: 12%;
+  height: 13%;
+}
+div.option2Swap {
+  /*background-image: url('https://i.imgur.com/uDhHFY6.png');*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 37%;
+  left: 24%;
+  width: 12%;
+  height: 13%;
+}
+div.option3Swap {
+  /*background-image: url('https://i.imgur.com/uDhHFY6.png');*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 52%;
+  left: 24%;
+  width: 12%;
+  height: 13%;
+}
+div.option4Swap {
+  /*background-image: url('https://i.imgur.com/uDhHFY6.png');*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 67%;
+  left: 24%;
+  width: 12%;
+  height: 13%;
+}
+
+
+/**************/
+/* Pick votes */
+/**************/
+div.castYourPickVote{
   background-image:url(assets/TPEVoteSwapCastYourVote.png);
-  background-size:contain;
-  position:absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 2.5%;
+  left: 40%;
+  width: 15.6%;
+  height: 11%;
 }
-div.positionOne{
-  height:140px;
-  width:230px;
-  margin-left:460px; 
-  margin-top:64px;
-  background-size:contain;
+div.optionPickText { /* We only need one class for text*/
+  position: absolute;
+  font-size: 4.5vh;
+  color: #da9e55;
+  text-align: right;
+  width: 100%;
+  top: 5.5%;
+  right: 8.5%;
 }
-div.positionOneText{
-  position:absolute;
-  margin-left:555px; 
-  margin-top:215px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.positionTwo{
-  height:140px;
-  width:230px;
-  margin-left:460px; 
-  margin-top:20px;
-  background-size:contain;
+div.option1Pick {
+  /*background-image: url('https://i.imgur.com/0QzcWSZ.png');*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 17%;
+  left: 31.5%;
+  width: 14%;
+  height: 6%;
 }
-div.positionTwoText{
-  position:absolute;
-  margin-left:555px; 
-  margin-top:375px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.positionThree{
-  height:140px;
-  width:230px;
-  margin-left:460px; 
-  margin-top:22px;
-  background-size:contain;
-} 
-div.positionThreeText{
-  position:absolute;
-  margin-left:555px; 
-  margin-top:537px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.positionFour{
-  position:absolute;
-  height:67px;
-  width:270px;
-  margin-left:590px; 
-  margin-top:116px;
-  background-size:contain;
-} 
-div.positionFourText{
-  position:absolute;
-  margin-left:782px; 
-  margin-top:138px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.positionFive{
-  position:absolute;
-  height:67px;
-  width:270px;
-  margin-left:1034px; 
-  margin-top:116px;
-  background-size:contain;
-} 
-div.positionFiveText{
-  position:absolute;
-  margin-left:1223px; 
-  margin-top:138px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.positionSix{
-  position:absolute;
-  height:67px;
-  width:270px;
-  margin-left:1479px; 
-  margin-top:116px;
-  background-size:contain;
+div.option2Pick {
+  /*background-image: url('https://i.imgur.com/0QzcWSZ.png');*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 17%;
+  left: 54.6%;
+  width: 14%;
+  height: 6%;
 }
-div.positionSixText{
-  position:absolute;
-  margin-left:1670px; 
-  margin-top:138px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.positionSeven{
-  height:140px;
-  width:230px;
-  margin-left:760px; 
-  margin-top:0px;
-  background-size:contain;
-}
-div.positionSevenText{
-  position:absolute;
-  margin-left:858px; 
-  margin-top:680px;
-  font-size: 2.8em;
-  width:40px;
-  height:20px;
-  color:#da9e55;
-  text-align:center;
-  vertical-align: middle;
-  line-height:20px;
-} 
-div.uiToggleButton{
-  position:absolute;
-  left:50%;
-    top:0px;
+div.option3Pick {
+  /*background-image: url('https://i.imgur.com/0QzcWSZ.png');*/
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 17%;
+  left: 77.7%;
+  width: 14%;
+  height: 6%;
 }

@@ -10,25 +10,28 @@ function ctrl($scope) {
     var token = "";
     var userId = "";
 
-
-    // Hard-coded marker for where the end of "swapStage" positions is in the vote.ids array. I'm sorry 
-    var swapStageMarker = 4;
-    // Simple object to track the user's current vote
+    // Simple object to track the user's current vote    
+    pickButtonIds = function() { return vote.pickButtonIds; };
+    swapButtonIds = function() { return vote.swapButtonIds; };
+    allButtonIds = function() { return vote.pickButtonIds.concat(vote.swapButtonIds); };
+    pickButtonTextIds = function() { return vote.pickButtonIds.map(text => text + 'Text'); };
+    swapButtonTextIds = function() { return vote.swapButtonIds.map(text => text + 'Text'); };
+    allButtonTextIds = function() { return pickButtonTextIds().concat(swapButtonTextIds()); };
+    
     var vote = {
         selectedVote: '',
-        // This is so hard coded that this ordering matters (check the Set Visible function)  
-        ids: ['posOne', 'posTwo', 'posThree', 'posSeven', 'posFour', 'posFive', 'posSix'],
-        textFields: ['posOneText', 'posTwoText', 'posThreeText', 'posFourText', 'posFiveText', 'posSixText', 'posSevenText']
+        pickButtonIds: ['option1pick', 'option2pick', 'option3pick'],
+        swapButtonIds: ['option1swap', 'option2swap', 'option3swap', 'option4swap']
     };
-
-    //Count should be returned from the API 
-    $scope.count1 = 38;
-    $scope.count2 = 10;
-    $scope.count3 = 4;
-
+    
+    getButtonType = function(str) { return str.substring(7); } //pick or swap
+    getButtonOption = function(str) { return str.substring(0, 7); } // 1, 2, 3, or 4
+    
+    setVisibility = function(id, visibility) { document.getElementById(id).style.visibility = visibility; }
 
     //https://dev.twitch.tv/docs/extensions/reference/#oncontext
     twitch.onContext(function (contextVar) {
+        clearScreen();
         context = contextVar;
     });
 
@@ -39,6 +42,10 @@ function ctrl($scope) {
         if (userId.charAt(0) === "A") {
             twitch.actions.requestIdShare(); //this is how we get usernames for Anarchy votes
         } else { /*???*/ }
+    });
+    
+    $(function() {
+        twitch.listen('broadcast', broadcastHandler);
     });
 
     createCastVoteRequest = function (voteOption) {
@@ -53,6 +60,8 @@ function ctrl($scope) {
             }
         }
     };
+    
+    $
 
     broadcastHandler = function(target, contentType, message) {
         obj = JSON.parse(message);
@@ -60,25 +69,32 @@ function ctrl($scope) {
         //$('#debug').text(obj.object.draftType);
         //vote-start handler
         if (obj.type == 'vote-start') {
+        	//Count should be returned from the API 
+            $scope.count1 = 0;
+            $scope.count2 = 0;
+            $scope.count3 = 0;
+            $scope.count4 = 0;
+            resetAllImages();
+            
             delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
             if (obj.object.draftType == 'picking') {
-                draftScreen();
+                beginDraftScreen();
             } else if (obj.object.draftType == 'swapping') {
-                swapScreen();
+                beginSwapScreen();
             }
 
-            //vote-end handler
+        //vote-end handler
         } else if (obj.type == 'vote-end') {
             //immediately deactivate voting and show results
-           clearScreen();
-            //vote-count-update handler
+            clearScreen();
+        
+        //vote-count-update handler
         } else if (obj.type == 'vote-count-update') {
-            delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
-            setTimeout(() => {
-                $scope.count1 = obj.object.option1;
-                $scope.count2 = obj.object.option2;
-                $scope.count3 = obj.object.option3;
-            }, delay)
+            //delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
+            $scope.count1 = obj.object.option1;
+            $scope.count2 = obj.object.option2;
+            $scope.count3 = obj.object.option3;
+            $scope.count4 = obj.object.option4;
 
             //immediately deactivate voting and show results
             // $('#vote-div').text(obj.object.winner + ' wins!');
@@ -86,106 +102,93 @@ function ctrl($scope) {
     }
 
     //Casts the vote to the backend
-    castVote = function () {
+    castVote = function (selectedOption) {
         if (!token) { return twitch.rig.log('Not authorized'); }
-        optionStrings = ['option1','option1','option1','option1'];
-        $.ajax(createCastVoteRequest(optionStrings[option]));
-        twitch.listen('broadcast', broadcastHandler);
+        $.ajax(createCastVoteRequest(selectedOption));
     };
-
+    
     //Actives the "Swap" screen
-    swapScreen = function () {
-        setVisible(0, swapStageMarker);
-        setTextVisible(['posOneText', 'posTwoText', 'posThreeText', 'posSevenText']);
-        document.getElementById("castVoteSwap").style.visibility = "visible"; 
+    beginSwapScreen = function () {
+    	swapButtonIds().map(button => setVisibility(button, "visible"));
+    	swapButtonTextIds().map(text => setVisibility(text, "visible"));
+        setVisibility("swapText", "visible");
         // document.body.style.backgroundImage = "url('https://i.imgur.com/rYhnUQO.png')";
     };
-
+    
     // Actives the "Draft" screen
-    draftScreen = function () {
-        setVisible(swapStageMarker, vote.ids.length);
-        setTextVisible(['posFourText', 'posFiveText', 'posSixText']);
+    beginDraftScreen = function () {
+        pickButtonIds().map(button => setVisibility(button, "visible"));
+        pickButtonTextIds().map(text => setVisibility(text, "visible"));
+        setVisibility("pickText", "visible");
         // document.body.style.backgroundImage = "url('https://i.imgur.com/QMdaXFG.jpg')";
-        document.getElementById("castVoteDraft").style.visibility = "visible";
     };
-
-    //Sets visible swap (0-2) or draft (3-5) vote buttons
-    setVisible = function (min, max) {
-        clearScreen();
-        for (var i = min; i < max; i++) {
-            document.getElementById(vote.ids[i]).style.visibility = "visible";
-        }
-    };
-
-    // This method is horrible and I'm sorry for writing it. It requires an array in the style of "['posOneText','posTwoText','posThreeText']" for Swap Stage, "['posFourText','posFiveText','posSixText']" for Draft stage, or empty for clearing completely. 
-    setTextVisible = function (numbersToSetVisible) {
-        for (var i = 0; i < vote.textFields.length; i++) {
-            var thisIsAUselessVariable = numbersToSetVisible.includes(vote.textFields[i]) ? document.getElementById(vote.textFields[i]).style.visibility = "visible" : document.getElementById(vote.textFields[i]).style.visibility = "hidden";
-        }
-    }
 
     //Clears all UI from the screen
-    clearScreen = function () {
+    clearScreen = function() {
         vote.selectedVote = "";
         resetAllImages();
-        setTextVisible([]);
-        for (var i = 0; i < vote.ids.length; i++) {
-            document.getElementById(vote.ids[i]).style.visibility = "hidden";
-        }
-        document.getElementById("castVoteDraft").style.visibility = "hidden";
-        document.getElementById("castVoteSwap").style.visibility = "hidden";
-        document.body.style.backgroundImage = "url('')";
+        allButtonTextIds().map(text => setVisibility(text, "hidden"));
+        allButtonIds().map(button => setVisibility(button, "hidden"));
+        setVisibility("pickText", "hidden");
+        setVisibility("swapText", "hidden");
     };
+    
     //Triggered when you mouseover. 
     $scope.hoverImage = function (ID) {
         if (vote.selectedVote != ID) {
-            if (vote.ids.indexOf(ID) < swapStageMarker) {
+            if (getButtonType(ID) === 'swap') {
                 document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteSwapActive.png)";
-            } else {
+            } else if (getButtonType(ID) === 'pick') {
                 document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteDraftActive.png)";
             }
         }
     };
-
+    
     //Triggered when your mouse leaves the button
     $scope.leftImage = function (ID) {
         if (vote.selectedVote != ID) {
-            if (vote.ids.indexOf(ID) < swapStageMarker) {
+            if (getButtonType(ID) === 'swap') {
                 document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteSwapInactive.png)";
-            } else {
+            } else if (getButtonType(ID) === 'pick') {
                 document.getElementById(ID).style.backgroundImage = "url(assets/TPEVoteDraftInactive.png)";
             }
         }
     };
-
+    
     //Resets all images to "inactive" 
     resetAllImages = function () {
-        for (var i = 0; i < vote.ids.length; i++) {
-            if (vote.ids.indexOf(vote.ids[i]) < swapStageMarker) {
-                document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteSwapInactive.png)";
-            } else {
-                document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteDraftInactive.png)";
-            }
-        }
+        swapButtonIds().map(button => document.getElementById(button).style.backgroundImage = "url(assets/TPEVoteSwapInactive.png)");
+        pickButtonIds().map(button => document.getElementById(button).style.backgroundImage = "url(assets/TPEVoteDraftInactive.png)");
     };
+    
     //Does the "make it green" magic
     $scope.clickImage = function (clickedID) {
-        resetAllImages();
-        for (var i = 0; i < vote.ids.length; i++) {
-            if (clickedID == vote.ids[i]) {
-                vote.selectedVote = clickedID;
-                if (vote.ids.indexOf(clickedID) < swapStageMarker) {
-                    document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteSwapSelected.png)";
-                } else {
-                    document.getElementById(vote.ids[i]).style.backgroundImage = "url(assets/TPEVoteDraftSelected.png)";
-                }
-            }
+    	resetAllImages();
+    	
+    	if(vote.selectedVote != "") {
+    	    if(getButtonOption(vote.selectedVote) === 'option1') { $scope.count1--; }
+            if(getButtonOption(vote.selectedVote) === 'option2') { $scope.count2--; }
+            if(getButtonOption(vote.selectedVote) === 'option3') { $scope.count3--; }
+            if(getButtonOption(vote.selectedVote) === 'option4') { $scope.count4--; }
+    	}
+        
+        //log vote
+        vote.selectedVote = clickedID;
+        voteOption = getButtonOption(clickedID)
+        castVote(voteOption);
+        
+        if(voteOption === 'option1') { $scope.count1++; }
+        if(voteOption === 'option2') { $scope.count2++; }
+        if(voteOption === 'option3') { $scope.count3++; }
+        if(voteOption === 'option4') { $scope.count4++; }
+        
+        //update image
+        if(getButtonType(clickedID) == 'pick') {
+            document.getElementById(clickedID).style.backgroundImage = "url(assets/TPEVoteDraftSelected.png)";
+        } else if(getButtonType(clickedID) == 'swap') {
+            document.getElementById(clickedID).style.backgroundImage = "url(assets/TPEVoteSwapSelected.png)";
         }
     }
-
-    getVoteNumber = function() {
-        var index = (vote.ids.indexOf(vote.selectedVote)%4)+1;
-        return index;
-    };
+    
 }
 
