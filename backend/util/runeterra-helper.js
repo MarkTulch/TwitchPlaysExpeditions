@@ -52,6 +52,8 @@ function getPickingOptions(apiUrl) {
                 rectangles = JSON.parse(body).Rectangles;
                 xPosArray = [];
                 yPosArray = [];
+
+                console.log(JSON.parse(body).Rectangles);
                 
                 //super sub-optimal sorting, but it's only 9 cards who cares
                 for (var card of rectangles) {

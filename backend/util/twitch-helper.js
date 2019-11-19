@@ -37,7 +37,7 @@ function verifyAndDecodeRequest(request) {
 }
 
 function broadcastObject(type, obj) {
-	console.log(clientId);
+	//console.log(clientId);
     const broadcastHeaders = {
         'Client-ID': clientId,
         'Content-Type': 'application/json',
