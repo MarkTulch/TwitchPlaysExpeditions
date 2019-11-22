@@ -1,14 +1,16 @@
 # TwitchPlaysExpeditions
 A lightweight application designed to allow Twitch users to vote on which cards get drafted next in a Streamer's Expedition run.
 
-Requires:
+### Requires:
 - npm  https://www.npmjs.com/
 - Twitch Developer Rig: https://dev.twitch.tv/docs/extensions/rig
 - ngrok: https://www.ngrok.com/
 
-
+#### NPM Install and Setup
 Once you download, simple `npm install` should take care of all dependencies.
 
+
+#### Twitch Developer Rig Install and Setup
 Go to https://dev.twitch.tv/ and create an extension there. You can use a simple test extension. Once you have the extension on the dev site, there's still a couple more things we need to configure.
 
 Go to your extension page on the twitch dev site and navigate to whatever the version number you're using is. From there, you should see a bunch of dev options. The top left will say `extension-name/Versions/your.version.here`. Below that will be a pipeline diagram and below that will be some options.
@@ -24,10 +26,13 @@ For `Back-end Files location` set it to `backend`. For `Run your back-end servic
 
 The clientId and clientSecret can be found on the twitch dev dashboard for the extension. Your ownerId can be found using this chrome extension and typing in your twitch username.
 
+#### ngrok Install
+Download and follow the instructions for setup and installation at https://www.ngrok.com/.
+
+
+#### Testing with Legends of Runeterra
 In Legends of Runeterra under `Settings`-> `Third Party Tools`, make sure `Enable Third Party Endpoints` is checked and the port number is `21337` (the default).
 
-Download and follow the instructions for setup and installation at https://www.ngrok.com/. Once ngrok is installed, find your `ngrok.exe` and launch the executable. Then run the command `ngrok.exe http 8081` to start ngrok. Take note of the forwarding url. It will be something like `https://1234abcd.ngrok.io`. Note: you need the `https://` not `http://`.
+Once ngrok is installed, find your `ngrok.exe` and launch the executable. Then run the command `ngrok.exe http 8081` to start ngrok. Take note of the forwarding url. It will be something like `https://abcde.ngrok.io`. Note: you need the `https://` not `http://`.
 
-In the Twitch Developer Rig under the `Extension Views` page, configure whatever views you would like. You will want 1 dashboard to perform setup for the voting, and at least 1 overlay to view the overlay on a stream.
-
-Start your Expedition.
+In the Twitch Developer Rig under the `Extension Views` page, configure whatever views you would like. You will want 1 dashboard to perform setup for the voting, and at least 1 overlay to view the overlay on a stream. Press `Run Back End` and then press `Run Front End`. In the dashboard view, you will see an input `API Host`. This is where you will put your `https://` ngrok url and then press `Update Configuration`. Then press `Enable Voting` and start your Expedition.
