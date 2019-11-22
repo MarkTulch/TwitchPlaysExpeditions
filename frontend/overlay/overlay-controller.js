@@ -9,6 +9,8 @@ function ctrl($scope) {
     var context = ""; //we save this because it has viewer latency info in it
     var token = "";
     var userId = "";
+    var ebsUrl = "";
+    var notloaded = true;
 
     // Simple object to track the user's current vote    
     pickButtonIds = function() { return vote.pickButtonIds; };
@@ -31,7 +33,10 @@ function ctrl($scope) {
 
     //https://dev.twitch.tv/docs/extensions/reference/#oncontext
     twitch.onContext(function (contextVar) {
-        clearScreen();
+        if(notloaded) {
+            clearScreen();
+            notloaded = false;
+        }
         context = contextVar;
     });
 
@@ -51,7 +56,7 @@ function ctrl($scope) {
     createCastVoteRequest = function (voteOption) {
         return {
             type: 'POST',
-            url: location.protocol + '//localhost:8081/cast-vote',
+            url: ebsUrl + '/cast-vote',
             headers: {
                 'Authorization': 'Bearer ' + token
             },
@@ -98,6 +103,10 @@ function ctrl($scope) {
 
             //immediately deactivate voting and show results
             // $('#vote-div').text(obj.object.winner + ' wins!');
+        } else if (obj.type == 'broadcast-url') {
+            if(ebsUrl != obj.object.ebsUrl) {
+                ebsUrl = obj.object.ebsUrl;
+            }
         }
     }
 

@@ -5,7 +5,9 @@ const request = require('request');
 //* Everything Twitch Helper                                                  *
 //*****************************************************************************
 
-const serverTokenDuration = 30 //tokens last 30 seconds
+const serverTokenDuration = 30; //tokens last 30 seconds
+
+var broadcastUrlInterval;
 
 clientId = "";
 secret = "";
@@ -75,4 +77,9 @@ function createSignedToken(){
     return jwt.sign(payload, secret, { algorithm: 'HS256' });
 }
 
-module.exports = {setClientId, setSecret, setOwnerId, broadcastObject, verifyAndDecodeRequest}
+function broadcastUrl(payload) {
+	if(broadcastUrlInterval) { clearTimeout(broadcastUrlInterval); }
+    broadcastUrlInterval = setInterval(broadcastObject, 2000, 'broadcast-url', payload);
+}
+
+module.exports = {setClientId, setSecret, setOwnerId, broadcastObject, verifyAndDecodeRequest, broadcastUrl}
