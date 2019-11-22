@@ -1,6 +1,9 @@
 # TwitchPlaysExpeditions
 A lightweight application designed to allow Twitch users to vote on which cards get drafted next in a Streamer's Expedition run.
 
+### Demo Video:
+https://youtu.be/2eCM43SuTSU
+
 ### Requires:
 - npm  https://www.npmjs.com/
 - Twitch Developer Rig: https://dev.twitch.tv/docs/extensions/rig
