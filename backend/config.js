@@ -1,6 +1,4 @@
 const app = require('commander');
-const fs = require('fs');
-const path = require('path');
 const Hapi = require('@hapi/hapi');
 const orchestrator = require('./vote-orchestrator');
 const twitch = require('./util/twitch-helper');
