@@ -20,7 +20,7 @@ twitch.onAuthorized(function(auth) {
     $('#update-config').removeAttr('disabled');
 });
 
-function createBeginVoteRequest(token, apiUrl, voteDuration) {
+function createBeginVoteRequest(token,  voteDuration) {
 	if(ebsUrl != ""){
 	    return {
 	        type: 'POST',
