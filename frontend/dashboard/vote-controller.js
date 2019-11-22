@@ -2,6 +2,7 @@ var twitch = window.Twitch.ext;
 
 var token = "";
 var tuid = "";
+var ebsUrl = "";
 
 //https://dev.twitch.tv/docs/extensions/reference/#oncontext
 twitch.onContext(function(context) {
@@ -16,19 +17,35 @@ twitch.onAuthorized(function(auth) {
     
     $('#api-host').removeAttr('disabled');
     $('#vote-seconds').removeAttr('disabled');
-    $('#begin-vote').removeAttr('disabled');
+    $('#update-config').removeAttr('disabled');
 });
 
-function createBeginVoteRequest(token, apiUrl, voteType, voteDuration) {
-	return {
+function createBeginVoteRequest(token, apiUrl, voteDuration) {
+	if(ebsUrl != ""){
+	    return {
+	        type: 'POST',
+            url: ebsUrl + '/begin-vote',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            data: {
+                apiUrl: 'http://localhost:21337',
+                voteDuration: voteDuration
+            }
+        }
+    }
+    return;
+}
+
+function createBroadcastUrlRequest(token, ebsUrl) {
+    return {
 	    type: 'POST',
-        url: location.protocol + '//localhost:8081/begin-vote',
+        url: ebsUrl + '/broadcast-url',
         headers: {
             'Authorization': 'Bearer ' + token
         },
         data: {
-            apiUrl: apiUrl,
-            voteDuration: voteDuration
+            ebsUrl: ebsUrl
         }
     }
 }
@@ -51,9 +68,18 @@ $(function() {
         twitch.rig.log('"Begin Vote" button clicked');
         $.ajax(createBeginVoteRequest(
             token,                                    //required auth token
-            $('#api-host').val(),                     //API Host URL for LoR
             $('#vote-seconds').val()                  //Vote duration
         ))
+    });
+    
+    $('#update-config').click(function() {
+        if(!token) { return twitch.rig.log('Not authorized'); }
+        $('#begin-vote').removeAttr('disabled');
+        ebsUrl = $('#api-host').val();
+        $.ajax(createBroadcastUrlRequest(
+            token,                                    //required auth token
+            $('#api-host').val()                      //API Host URL for EBS
+        ));
     });
     
     twitch.listen('broadcast', broadcastHandler);

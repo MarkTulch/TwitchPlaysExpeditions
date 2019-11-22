@@ -1,4 +1,6 @@
 const app = require('commander');
+const fs = require('fs');
+const path = require('path');
 const Hapi = require('@hapi/hapi');
 const orchestrator = require('./vote-orchestrator');
 const twitch = require('./util/twitch-helper');
@@ -59,7 +61,7 @@ const serverOptions = {
     cors: {
       origin: ['*'],
     },
-  },
+  }
 };
 
 const server = new Hapi.Server(serverOptions);
@@ -78,6 +80,13 @@ const server = new Hapi.Server(serverOptions);
     method: 'POST',
     path: '/cast-vote',
     handler: castVoteHandler,
+  });
+  
+  // Handle the start of a vote
+  server.route({
+    method: 'POST',
+    path: '/broadcast-url',
+    handler: broadcastUrlHandler,
   });
   
   // Start the server.
@@ -100,3 +109,10 @@ function castVoteHandler(request) {
         twitch.verifyAndDecodeRequest(request, secret)
     );
 }
+
+function broadcastUrlHandler(request) {
+    twitch.broadcastUrl(twitch.verifyAndDecodeRequest(request, secret)); //async
+    //API requires a response of some kind. TODO: fix this
+    return 'yes';
+}
+	
