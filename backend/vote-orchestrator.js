@@ -18,7 +18,7 @@ var currentSelection = {};
 //* Main Vote Orchestrator                                                    *
 //*****************************************************************************
 function initVoting(payload) {
-	//beginVote(15, 'picking');
+    //beginVote(15, 'picking');
     setInterval(detectNewCards, apiCooldownMs, payload.apiUrl, payload.voteDuration);	
 }
 
@@ -81,7 +81,11 @@ function endVote() {
         voteEndTimeout = null;
         twitch.broadcastObject('vote-end', countVotes());
     }
-    if(voteCountUpdateTimeout) { clearTimeout(voteCountUpdateTimeout); voteCountUpdateTimeout = null; }
+    if(voteCountUpdateTimeout) { 
+        clearTimeout(voteCountUpdateTimeout); 
+        voteCountUpdateTimeout = null; 
+        twitch.broadcastObject('vote-end', countVotes()); 
+    }
 }
 
 

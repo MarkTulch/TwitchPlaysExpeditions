@@ -74,12 +74,13 @@ function ctrl($scope) {
         //$('#debug').text(obj.object.draftType);
         //vote-start handler
         if (obj.type == 'vote-start') {
+            
+            clearScreen();
         	//Count should be returned from the API 
             $scope.count1 = 0;
             $scope.count2 = 0;
             $scope.count3 = 0;
             $scope.count4 = 0;
-            resetAllImages();
             
             delay = context.hlsLatencyBroadcaster ? context.hlsLatencyBroadcaster * 1000 : 0; //reveal voting div after latency delay
             if (obj.object.draftType == 'picking') {
